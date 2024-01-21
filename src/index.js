@@ -1,7 +1,17 @@
-import express from "express";
+import { app } from "./app.js";
+import { connectDb } from "./db/index.js";
+import dotenv from "dotenv";
 
-const app = express();
+dotenv.config();
 
-app.listen(8000, () => {
-  console.log("Server Running...");
+const PORT = process.env.PORT || 8000;
+
+connectDb().then(() => {
+  try {
+    app.listen(PORT, () => {
+      console.log("Server Running...");
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
