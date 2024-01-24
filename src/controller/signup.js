@@ -1,4 +1,6 @@
 import { User } from "../model/user.model.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { CustomError } from "../utils/errorHandler.js";
 
 /*
     @desc register user
@@ -6,23 +8,29 @@ import { User } from "../model/user.model.js";
     @access public
 */
 
-const signup = async (req, res) => {
+const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (
-    [username, email, password].every(
-      (item) => item === undefined && item === ""
-    )
-  ) {
-    return res.status(400).json({ message: "All fields are required" });
+  const allRequiredFieldFillled = [username, email, password].every(
+    (item) => item === undefined
+  );
+
+  if (!allRequiredFieldFillled) {
+    throw new CustomError(400, "All fields are required");
   }
 
-  const newUser = await User.create({
+  const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+
+  if (existingUser) {
+    throw new CustomError(400, "User already exists");
+  }
+
+  await User.create({
     ...req.body,
   });
 
   res.send("User Registered");
-};
+});
 
 /*
     @desc authenticate user
