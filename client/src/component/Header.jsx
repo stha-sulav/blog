@@ -23,8 +23,8 @@ const Header = () => {
       <Button className="w-12 h-10 lg:hidden" color="gray" pill>
         <AiOutlineSearch />
       </Button>
-      <div className="flex gap-2 items-center md:order-2">
-        <Button className="w-12 h-10 hidden lg:inline" color="gray" pill>
+      <div className="flex gap-2 items-center sm:order-2">
+        <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
           <FaMoon />
         </Button>
         <Link to="/signin">
