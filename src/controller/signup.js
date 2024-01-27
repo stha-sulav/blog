@@ -7,7 +7,6 @@ import { CustomError } from "../utils/errorHandler.js";
     @route /api/v1/auth/signup
     @access public
 */
-
 const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -15,7 +14,7 @@ const signup = asyncHandler(async (req, res) => {
     (item) => item === undefined
   );
 
-  if (!allRequiredFieldFillled) {
+  if (allRequiredFieldFillled) {
     throw new CustomError(400, "All fields are required");
   }
 
@@ -29,7 +28,7 @@ const signup = asyncHandler(async (req, res) => {
     ...req.body,
   });
 
-  res.send("User Registered");
+  res.json("User Registered");
 });
 
 /*
