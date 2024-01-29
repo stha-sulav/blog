@@ -2,11 +2,17 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidError } from "react-icons/bi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
 
 const Signin = () => {
   const [formData, setFormData] = useState({});
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { isLoading, error: errorMsg } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
 
@@ -20,12 +26,11 @@ const Signin = () => {
     e.preventDefault();
 
     if (!formData.username || !formData.email || !formData.password) {
-      setErrorMsg("All fieds are required!");
+      dispatch(signInFailure("All fieds are required!"));
     }
 
     try {
-      setIsLoading(true);
-      setErrorMsg(null);
+      dispatch(signInStart());
       const res = await fetch("/api/v1/auth/signin", {
         method: "POST",
         headers: {
@@ -36,17 +41,15 @@ const Signin = () => {
       const data = await res.json();
 
       if (data.success === false) {
-        setErrorMsg(data.message);
+        dispatch(signInFailure(data.message));
       }
 
       if (res.ok) {
+        dispatch(signInSuccess(data));
         navigate("/");
       }
-
-      setIsLoading(false);
     } catch (error) {
-      setErrorMsg(error.message);
-      setIsLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
 
