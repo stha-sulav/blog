@@ -38,8 +38,8 @@ const signup = asyncHandler(async (req, res) => {
     @access public
 */
 const signin = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
-  const allRequiredFieldFillled = [username, password].every(
+  const { email, password } = req.body;
+  const allRequiredFieldFillled = [email, password].every(
     (item) => item === undefined || item.trim("") === ""
   );
 
@@ -48,14 +48,13 @@ const signin = asyncHandler(async (req, res) => {
   }
 
   const validUser = await User.findOne({
-    username,
+    email,
   });
+  const isPasswordValidValid = await validUser.verifyPassword(password);
 
-  if (!validUser) {
+  if (!(validUser && isPasswordValidValid)) {
     throw new CustomError(400, "Invalid Credential");
   }
-
-  const isPasswordValidValid = await validUser.verifyPassword(password);
 
   generateToken(res, validUser._id);
 
