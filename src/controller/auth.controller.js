@@ -50,9 +50,13 @@ const signin = asyncHandler(async (req, res) => {
   const validUser = await User.findOne({
     email,
   });
-  const isPasswordValidValid = await validUser.verifyPassword(password);
 
-  if (!(validUser && isPasswordValidValid)) {
+  if (!validUser) {
+    throw new CustomError(400, "Invalid Credential");
+  }
+
+  const isPasswordValidValid = await validUser.verifyPassword(password);
+  if (!isPasswordValidValid) {
     throw new CustomError(400, "Invalid Credential");
   }
 
